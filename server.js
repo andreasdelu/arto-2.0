@@ -4,12 +4,12 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-const port = process.env.port || 3000;
+const port = process.env.port || 5000;
 
 app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/app/index.html');
+    res.sendFile(__dirname + '/index.html');
 });
-app.use(express.static(__dirname + '/app'));
+app.use(express.static(__dirname));
 
 
 io.on("connection", socket => {
@@ -62,11 +62,7 @@ async function getSocketsRoom(room){
     }
 }
 
-app.route("/check").get((req,res) =>{
-    return res.json("Your app is working fine :)");
-})
-
 server.listen(port, "0.0.0.0", function() {
-    console.log('listening on *:3000');
+    console.log('listening on ' + port);
  });
 
