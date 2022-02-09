@@ -6,6 +6,8 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const port = process.env.PORT || 5000;
 
+const logging = require('./logging.js');
+
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
@@ -14,31 +16,43 @@ app.use(express.static(__dirname));
 
 io.on("connection", socket => {
     socket.on("send-message", (message, room) => {
-        if (room === '') {
-            socket.broadcast.emit("recieve-message", "Global: " + socket.username + ": " + message)
-        }
-        socket.to(room).emit("recieve-message", room + ": " + socket.username + ": " + message)
+        /* if (room === '') {
+            socket.broadcast.emit("recieve-message", "[Global]: " + socket.username + ": " + message)
+        } */
+        socket.to(room).emit("recieve-message",  socket.username + ": " + message)
+        logging.log(socket.username + ": " + message)
     })
     socket.on("join-room", (room, cb) => {
+        socket.leave("Global")
         socket.join(room)
         getSocketsRoom(room);
-        cb(`You joined the room: ${room}`)
-        socket.to(room).emit("recieve-message", socket.username + ": " + "Joined the room!")
+        cb(`You joined room: ${room}`)
+        socket.to(room).emit("alert-message", socket.username + " joined the room!")
     })
     socket.on("leave-room", (room, cb) => {
         socket.leave(room)
         getSocketsRoom(room);
-        cb(`You left the room: ${room}`)
+        cb(`You left room: ${room}`)
         socket.to(room).emit("recieve-message", socket.username + ": " + "Left the room!")
     })
     socket.on("set-name", (nickname) => {
         socket.username = nickname
         getSockets()
+        /* socket.broadcast.emit("alert-message", socket.username + " joined!") */
         
     })
     socket.on("disconnect", (reason) => {
         console.log("User disconnected: " + reason);
         getSockets();
+        io.emit("recieve-message", socket.username + " left")
+    })
+    socket.on("is-typing", (state) =>{ 
+        if (state === true) {
+            socket.broadcast.emit("user-typing", socket.username + " is typing...")
+        }
+        else if (state === false) {
+            io.emit("user-stop-typing")
+        }
     })
 })
 
@@ -65,4 +79,5 @@ async function getSocketsRoom(room){
 server.listen(port, "0.0.0.0", function() {
     console.log('listening on ' + port);
  });
+
 

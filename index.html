@@ -5,117 +5,52 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat with Rooms!</title>
-    <style>
-        body{
-            max-width: fit-content;
-            margin: 0 auto;
-            background-size: cover;
-            background-color: rgb(206, 206, 206);
-        }
-        h1{
-            text-align: center;
-        }
-        li{
-            margin-bottom: 3px;
-            margin-left: 3px;
-        }
-        .wrapper{
-            display: flex;
-            margin: 0 20px;
-            margin-top: 20px;
-            position: relative;
-        }
-        #form{
-            width: fit-content;
-            margin-left: 20px;
-            
-        }
-        #lists{
-            display: flex;
-            flex-direction: column;
-            margin: 0 10px;
-            height: 300px;
-            width: 200px;
-        }
-        #all-list, #room-list{
-            width: 100%;
-            height: 100%;
-            outline: 1px solid black;
-            overflow-y: scroll;
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            background-color: white;
-        }
-        #all-list{
-            margin-bottom: 5px;
-        }
-        #room-list{
-            margin-top: 5px;
-        }
-        #message-container{
-            width: 80vw;
-            max-width: 500px;
-            height: 300px;
-            outline: 1px solid black;
-            overflow-y: scroll;
-            background-color: white;
-        }
-        .message, .you{
-            padding: 4px 0;
-            padding-left: 5px;
-            border-bottom: 1px solid rgb(204, 204, 204);
-            max-width: 100%;
-        }
-        .you{
-            font-weight: bold;
-        }
-        #typing{
-            width: 80vw;
-            max-width: fit-content;
-            background-color: lightgray;
-            position: absolute;
-            bottom: 0;
-            font-size: 0.8rem;
-            list-style: none;
-            margin-bottom: 0;
-            
-        }
-        p{
-            margin: 0;
-            padding: 0;
-        }
-        p:nth-child(even){
-            background-color: rgb(231, 231, 231);
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Arto 2.0</h1>
+    <svg id="settings" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve">
+        <metadata> Svg Vector Icons : http://www.onlinewebfonts.com/icon </metadata>
+        <g><path d="M990,591.2V408.9l-140.6-24c-5.8-17.5-12.7-34.3-20.9-50.5L911,218L782,89l-117.2,83c-15.8-7.9-32.3-14.4-49.4-19.9L591.2,10H408.9l-24.5,143.6c-16.4,5.5-32.1,12.1-47.3,19.8L218,89L89,218l84.9,119.8c-7.4,14.9-13.4,30.3-18.8,46.2L10,408.8v182.4l145.2,24.8c5.3,16,11.4,31.2,18.8,46.1L89.1,782L218,910.9l119.1-84.3c15.2,7.7,30.9,14.2,47.2,19.8L408.9,990h182.4l24.3-142.1c17.1-5.6,33.5-12,49.3-19.9L782,911L911,782.1l-82.4-116.4c8.3-16.2,15.1-33,20.9-50.5L990,591.2z M502.2,675c-96.6,0-175-78.3-175-175c0-96.6,78.4-175,175-175c96.7,0,175,78.4,175,175C677.2,596.7,598.8,675,502.2,675z"/></g>
+    </svg>
+    <div class="content">
+        <h1>Arto 2.0</h1>
+        <div class="wrapper">
+            <div id="message-container">
+            </div>
+            <div id="typing">
+            </div>
+            <div class="side">
+                <div id="lists">
+                    All online:
+                    <ul id="all-list"></ul>
+                    <p>Online in room: <span id="room-name">Global</span></p>
+                    <ul id="room-list"></ul>
+                </div>
+                <div class="room-container">
+                    <input type="text" id="room-input" maxlength="6" minlength="1" autocomplete="off" placeholder="Room">
+                    <div class="room-btns">
+                        <button type="button" id="room-button" >Join</button>
+                        <button disabled type="button" id="leave-button" >Leave</button>
+                    </div>
+                </div>
     
-    <div class="wrapper">
-        <div id="message-container"></div>
-        <div id="typing">
+            </div>
         </div>
-        <div id="lists">
-            All online:
-            <ul id="all-list"></ul>
-            Currently in room:
-            <ul id="room-list"></ul>
+        <form id="form">
+            <div class="typer">
+                <input name="message-input" id="message-input" autocomplete="off" placeholder="Message">
+                <button type="submit" id="send-button" >Send</button>
+            </div>
+        </form>
+    </div>
+    <div id="modal-settings">
+        <div id="modal-background"></div>
+        <div id="settings-window">
+            <h2>Settings</h2>
+            <hr>
+            <input type="color" name="color" id="color">
         </div>
     </div>
-    <br>
-    <form id="form">
-        <label for="message-input">Message: </label>
-        <input type="text" id="message-input" autocomplete="off">
-        <button type="submit" id="send-button" >Send</button>
-        <br> <br>
-        <label for="room-input">Room: </label>
-        <input type="text" id="room-input" maxlength="6" minlength="1" autocomplete="off">
-        <button type="button" id="room-button" >Join</button>
-        <button disabled type="button" id="leave-button" >Leave</button>
-        <br> <br>
-    </form>
     <script src="/socket.io/socket.io.js"></script>
     <script defer src="/script.js"></script>
 </body>
