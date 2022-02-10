@@ -211,7 +211,12 @@ socket.on("alert-message", message => {
 })
 
 async function loadChat() {
-    const response = await fetch("chatlogs/log.json")
+    const date = new Date();
+    const day = date.getDate();
+    const month = date.getMonth();
+    const year = date.getFullYear();
+
+    const response = await fetch('chatlogs/log' + day + month + year + '.json')
     const chats = await response.json()
 
     
